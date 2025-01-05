@@ -60,39 +60,9 @@ Key SQL Queries
 
 1. Percentage Contribution to Total Revenue
 
-SELECT
-    pizza_types.name,
-    SUM(order_details.quantity * pizzas.price) / (SELECT SUM(quantity * price) FROM pizzas JOIN order_details ON pizzas.pizza_id = order_details.pizza_id) * 100 AS percentage_contribution
-FROM pizza_types
-JOIN pizzas ON pizza_types.pizza_type_id = pizzas.pizza_type_id
-JOIN order_details ON pizzas.pizza_id = order_details.pizza_id
-GROUP BY pizza_types.name;
-
 2. Top 3 Most Ordered Pizza Types by Category
 
-SELECT category, name, revenue
-FROM (
-    SELECT
-        pizza_types.category,
-        pizza_types.name,
-        SUM(order_details.quantity * pizzas.price) AS revenue,
-        RANK() OVER (PARTITION BY pizza_types.category ORDER BY SUM(order_details.quantity * pizzas.price) DESC) AS rank
-    FROM pizza_types
-    JOIN pizzas ON pizza_types.pizza_type_id = pizzas.pizza_type_id
-    JOIN order_details ON pizzas.pizza_id = order_details.pizza_id
-    GROUP BY pizza_types.category, pizza_types.name
-) AS ranked_data
-WHERE rank <= 3;
-
 3. Cumulative Revenue Over Time
-
-SELECT
-    orders.order_date,
-    SUM(SUM(order_details.quantity * pizzas.price)) OVER (ORDER BY orders.order_date) AS cumulative_revenue
-FROM pizzas
-JOIN order_details ON pizzas.pizza_id = order_details.pizza_id
-JOIN orders ON order_details.order_id = orders.order_id
-GROUP BY orders.order_date;
 
 Prerequisites
 
